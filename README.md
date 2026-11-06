@@ -1,17 +1,17 @@
-# 100 Programadores Dijeron 🎯
+# 100 Programadores Dijeron 
 
 Juego interactivo estilo **100 Mexicanos Dijeron / Family Feud** desarrollado para el AWS User Group Mariachi Builders. Diseño fiel al tablero físico original: arco azul royal, fondo amarillo, bombillas animadas y ranuras tipo persiana.
 
 ---
 
-## 🗂️ Estructura del proyecto
+## Estructura del proyecto
 
 ```
-📁 /
-├── index.html          → 📺 Tablero TV principal  (proyectar en pantalla grande)
-├── admin.html          → 🎛️  Panel del Conductor / Admin
-├── buzzer.html         → ⚡ Cara a Cara — botones de buzzer para los equipos
-├── fastmoney.html      → 💰 Dinero Rápido — Gran Final
+ /
+├── index.html          →  Tablero TV principal  (proyectar en pantalla grande)
+├── admin.html          → Panel del Conductor / Admin
+├── buzzer.html         → Cara a Cara — botones de buzzer para los equipos
+├── fastmoney.html      → Dinero Rápido — Gran Final
 ├── amplify.yml         → Configuración de despliegue en AWS Amplify
 ├── logo ug mb nuevo.png
 └── AWS_logo_RGB_WHT.png
@@ -19,7 +19,7 @@ Juego interactivo estilo **100 Mexicanos Dijeron / Family Feud** desarrollado pa
 
 ---
 
-## 📺 Páginas
+## Páginas
 
 ### `index.html` — Tablero TV
 - Se proyecta en pantalla grande durante el juego
@@ -43,7 +43,7 @@ Juego interactivo estilo **100 Mexicanos Dijeron / Family Feud** desarrollado pa
 
 ---
 
-## 🔊 Sonidos
+## Sonidos
 
 Los sonidos oficiales del programa se cargan desde MyInstants:
 
@@ -58,7 +58,7 @@ Los sonidos oficiales del programa se cargan desde MyInstants:
 
 ---
 
-## 🔄 Sincronización
+## Sincronización
 
 Todas las páginas se sincronizan en tiempo real mediante:
 - `BroadcastChannel('100_prog_dijeron')` — para pestañas en el mismo navegador
@@ -66,7 +66,7 @@ Todas las páginas se sincronizan en tiempo real mediante:
 
 ---
 
-## 🎮 Flujo de juego
+## Flujo de juego
 
 1. Abrir `admin.html` en la laptop del conductor
 2. Proyectar `index.html` en pantalla grande
@@ -76,7 +76,7 @@ Todas las páginas se sincronizan en tiempo real mediante:
 
 ---
 
-## ☁️ Despliegue en AWS Amplify
+## Despliegue en AWS Amplify
 
 1. Subir este repositorio a GitHub
 2. En [AWS Amplify Console](https://console.aws.amazon.com/amplify/) → **New app → Host web app**
@@ -88,7 +88,7 @@ Todas las páginas se sincronizan en tiempo real mediante:
 
 ---
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 - HTML5 + CSS3 + JavaScript vanilla (sin frameworks)
 - [Tailwind CSS](https://tailwindcss.com/) via CDN (admin y buzzer)
