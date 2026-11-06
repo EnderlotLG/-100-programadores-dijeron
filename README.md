@@ -99,6 +99,6 @@ Todas las páginas se sincronizan en tiempo real mediante:
 
 ---
 
-## 🏗️ AWS UG Mariachi Builders
+## AWS UG Mariachi Builders
 
-Desarrollado para los eventos del [AWS User Group Mariachi Builders](https://www.meetup.com/aws-user-group-mariachi-builders/).
+Desarrollado para los eventos del [AWS User Group Mariachi Builders](https://www.meetup.com/aws-user-group-mariachi-builders/) & AWS Community Latam.
