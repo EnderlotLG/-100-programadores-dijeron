@@ -1,0 +1,470 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>100 Programadores Dijeron — Tablero TV</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Orbitron:wght@700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --Y:#F5C200; --YL:#FFE566; --YD:#D4920A;
+      --BR:#1535CC; --BM:#2244DD; --BD:#0A1E88;
+      --W:#5C2E00;  --WL:#7A3F00; --WD:#3A1800;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{width:100%;height:100%;overflow:hidden;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:radial-gradient(ellipse 130% 130% at 50% -5%,
+        #FFE566 0%,#F5C200 22%,#D4920A 52%,#B87000 75%,#7A4500 100%);
+      display:flex;flex-direction:column;
+      user-select:none;
+    }
+    .font-tv{font-family:'Anton',Impact,sans-serif;letter-spacing:.06em;}
+    .font-led{font-family:'Orbitron',monospace;}
+
+    /* ── SCORE CARDS ── */
+    .sc{
+      background:linear-gradient(160deg,var(--BD),var(--BR),var(--BM));
+      border:3px solid var(--Y);
+      border-radius:14px;
+      box-shadow:0 0 0 2px var(--BD),0 5px 20px rgba(0,0,0,.7);
+    }
+    .sc-led{
+      font-family:'Orbitron',monospace;
+      color:var(--YL);
+      text-shadow:0 0 10px var(--Y),0 0 24px rgba(245,194,0,.5);
+    }
+    .pot{
+      background:linear-gradient(160deg,var(--WD),var(--W),var(--WL));
+      border:3px solid var(--Y);
+      border-radius:14px;
+      box-shadow:0 0 0 2px var(--WD),0 5px 20px rgba(0,0,0,.7);
+    }
+
+    /* ── BOARD WRAPPER (fondo amarillo = body, no extra) ── */
+    .arch{
+      background:linear-gradient(160deg,var(--BM),var(--BR),var(--BD));
+      border:4px solid var(--Y);
+      border-radius:22px;
+      padding:6px;
+      box-shadow:0 0 0 2px var(--BD),0 6px 26px rgba(21,53,204,.6),inset 0 2px 6px rgba(255,255,255,.15);
+    }
+
+    /* ── BULBS ── */
+    .bulbs{display:flex;justify-content:space-around;padding:2px 6px;}
+    .bulb{
+      width:10px;height:10px;border-radius:50%;flex-shrink:0;
+      background:#fffde7;
+      box-shadow:0 0 4px var(--Y),0 0 10px rgba(245,194,0,.5);
+      animation:bf 1.1s infinite alternate ease-in-out;
+    }
+    .bulb:nth-child(2n){animation-delay:.55s;}
+    .bulb:nth-child(3n){animation-delay:.28s;}
+    @keyframes bf{0%{opacity:.25;transform:scale(.75)}100%{opacity:1;transform:scale(1.3);box-shadow:0 0 7px #fff,0 0 16px var(--Y);}}
+
+    /* ── ORBS ── */
+    .orb{
+      width:clamp(28px,4vw,48px);height:clamp(28px,4vw,48px);
+      border-radius:50%;flex-shrink:0;
+      background:radial-gradient(circle at 35% 30%,#6699ff,var(--BR),var(--BD));
+      border:3px solid var(--Y);
+      box-shadow:0 0 12px rgba(51,102,255,.8);
+    }
+
+    /* ── INNER BROWN FRAME ── */
+    .bframe{
+      background:linear-gradient(160deg,var(--W),var(--WL),var(--W));
+      border:4px solid var(--WD);
+      border-radius:13px;padding:8px;
+      box-shadow:0 3px 14px rgba(0,0,0,.75),inset 0 2px 5px rgba(0,0,0,.55);
+      position:relative;
+    }
+    /* Tornillos */
+    .screw{
+      position:absolute;width:11px;height:11px;border-radius:50%;
+      background:radial-gradient(circle at 35% 30%,#8B6532,#3A1800);
+      border:2px solid #2A1000;box-shadow:inset 0 1px 3px rgba(0,0,0,.8);
+    }
+
+    /* ── QUESTION BAR ── */
+    .qbar{
+      background:linear-gradient(90deg,var(--BD),var(--BR),var(--BD));
+      border:3px solid var(--Y);
+      border-radius:9px;
+      padding:7px 14px;text-align:center;
+      box-shadow:inset 0 2px 7px rgba(0,0,0,.6);
+      margin-bottom:7px;
+    }
+    .qbar p{
+      font-family:'Anton',sans-serif;
+      font-size:clamp(.8rem,2vw,1.25rem);
+      color:var(--YL);letter-spacing:.04em;
+      text-shadow:0 0 7px rgba(255,230,102,.35);
+    }
+
+    /* ── SLOTS ── */
+    .slot-out{
+      background:linear-gradient(180deg,var(--WL),var(--W),var(--WD));
+      border:3px solid var(--WD);
+      border-radius:7px;padding:4px;
+      box-shadow:0 3px 10px rgba(0,0,0,.7),inset 0 2px 4px rgba(0,0,0,.55);
+      position:relative;
+    }
+    .slot-closed{
+      background:repeating-linear-gradient(180deg,#1A1208 0,#1A1208 7px,#2C1E0A 7px,#2C1E0A 9px);
+      border:2px solid #100C04;border-radius:4px;
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .slot-num{
+      background:radial-gradient(circle at 35% 30%,var(--YL),var(--Y),var(--YD));
+      border:2px solid #fff;border-radius:9999px;
+      min-width:36px;height:28px;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Anton',sans-serif;font-size:1rem;color:var(--WD);
+      box-shadow:0 2px 7px rgba(0,0,0,.65);
+    }
+    .slot-open{
+      background:linear-gradient(180deg,#0F0600,#1A1208);
+      border:2px solid var(--Y);border-radius:4px;
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:space-between;padding:0 9px;
+      box-shadow:inset 0 0 14px rgba(245,194,0,.12);
+    }
+    .slot-txt{
+      font-family:'Anton',sans-serif;
+      font-size:clamp(.7rem,1.7vw,1rem);letter-spacing:.04em;
+      color:var(--YL);text-shadow:0 0 7px rgba(245,194,0,.35);
+      flex:1;padding-right:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .slot-pts{
+      background:linear-gradient(180deg,var(--YL),var(--Y));
+      color:var(--BD);font-family:'Anton',sans-serif;
+      font-size:clamp(.8rem,1.8vw,1.15rem);
+      padding:2px 9px;border-radius:5px;border:2px solid #fff;
+      box-shadow:0 2px 5px rgba(0,0,0,.5);white-space:nowrap;flex-shrink:0;
+    }
+
+    /* ── FLIP ── */
+    .persp{perspective:1100px;}
+    .fw{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.34,1.56,.64,1);transform-style:preserve-3d;}
+    .fw.flipped{transform:rotateX(180deg);}
+    .ff{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+    .ff.back{transform:rotateX(180deg);}
+
+    /* ── STRIKES ── */
+    .stk-out{
+      background:linear-gradient(180deg,var(--WL),var(--W),var(--WD));
+      border:3px solid var(--WD);border-radius:7px;padding:4px;
+      box-shadow:0 2px 8px rgba(0,0,0,.65);
+    }
+    .stk-in{
+      background:repeating-linear-gradient(180deg,#1A1208 0,#1A1208 6px,#2C1E0A 6px,#2C1E0A 8px);
+      border:2px solid #100C04;border-radius:4px;
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Anton',sans-serif;font-size:1.3rem;color:rgba(26,18,8,.4);
+      transition:all .3s;
+    }
+    .stk-in.on{
+      background:linear-gradient(160deg,#cc0000,#880000);
+      border-color:var(--Y);color:var(--YL);
+      box-shadow:0 0 18px rgba(200,0,0,.9),0 0 32px rgba(200,0,0,.5);
+    }
+
+    /* ── BANNERS ── */
+    @keyframes pb{0%,100%{box-shadow:0 0 14px rgba(21,53,204,.7)}50%{box-shadow:0 0 38px rgba(21,53,204,1)}}
+    .steal-banner{
+      background:linear-gradient(90deg,var(--BD),var(--BR),var(--BD));
+      border:4px solid var(--Y);border-radius:14px;padding:8px 14px;text-align:center;
+      animation:pb 1.2s infinite;
+    }
+    @keyframes bzi{0%{transform:translateY(-12px) scale(.93);opacity:0}100%{transform:none;opacity:1}}
+    .buz-banner{
+      background:linear-gradient(90deg,var(--Y),var(--YL),var(--Y));
+      border:4px solid var(--BR);border-radius:14px;padding:9px;text-align:center;
+      animation:bzi .35s ease-out forwards;color:var(--BD);
+    }
+    @keyframes wi{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+    .win-banner{
+      background:linear-gradient(135deg,var(--Y),var(--YL),var(--Y));
+      border:4px solid var(--BR);border-radius:18px;padding:14px;
+      box-shadow:0 0 55px rgba(245,194,0,.9);
+      animation:wi .5s cubic-bezier(.22,1,.36,1) forwards;text-align:center;color:var(--BD);
+    }
+
+    /* ── POSS BADGE ── */
+    .poss{
+      position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+      background:var(--Y);color:var(--BD);
+      font-family:'Anton',sans-serif;font-size:.6rem;letter-spacing:.05em;
+      padding:2px 9px;border-radius:9999px;border:2px solid #fff;
+      box-shadow:0 2px 6px rgba(0,0,0,.5);z-index:10;white-space:nowrap;display:none;
+    }
+
+    /* ── STRIKE OVERLAY ── */
+    @keyframes sp{0%{transform:scale(.2) rotate(-10deg);opacity:0}60%{transform:scale(1.1) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+    #stkOverlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.82);}
+    #stkBoxes{display:flex;gap:24px;animation:sp .4s cubic-bezier(.22,1,.36,1) forwards;}
+  </style>
+</head>
+<body>
+
+  <!-- ══ MINI HEADER con logos (sin nav) ══ -->
+  <div style="background:linear-gradient(90deg,var(--BD),var(--BR),var(--BD));border-bottom:3px solid var(--Y);padding:6px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="logo ug mb nuevo.png"       alt="Mariachi Builders" style="height:44px;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));"/>
+      <img src="AWS_logo_RGB_WHT.png" alt="AWS"               style="height:36px;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));"/>
+    </div>
+    <div style="text-align:center;flex:1;">
+      <div class="font-tv" style="font-size:clamp(.85rem,2.2vw,1.3rem);color:var(--YL);letter-spacing:.12em;">100 PROGRAMADORES DIJERON</div>
+      <div style="font-size:.55rem;font-family:monospace;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,230,102,.55);">AWS UG Mariachi Builders · Edición Oficial</div>
+    </div>
+    <div style="display:flex;gap:5px;">
+      <button onclick="toggleFullScreen()" style="background:rgba(0,0,0,.4);border:2px solid rgba(245,194,0,.4);color:var(--YL);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.7rem;">⛶</button>
+      <button id="btnMute" onclick="toggleMute()" style="background:rgba(0,0,0,.4);border:2px solid rgba(245,194,0,.4);color:var(--YL);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.7rem;">🔊</button>
+    </div>
+  </div>
+
+  <!-- ══ MAIN ══ -->
+  <main style="flex:1;display:flex;flex-direction:column;gap:8px;padding:10px 16px;overflow:hidden;">
+
+    <!-- SCOREBOARD -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;flex-shrink:0;">
+      <!-- Team A -->
+      <div class="sc" style="padding:7px 12px;position:relative;">
+        <div id="possA" class="poss">▶ EN JUEGO</div>
+        <div id="nameA" class="font-tv" style="font-size:clamp(.7rem,1.8vw,1.1rem);color:var(--YL);text-align:center;"></div>
+        <div id="scoreA" class="sc-led" style="font-size:clamp(1.8rem,4.5vw,3.2rem);text-align:center;line-height:1.1;">000</div>
+        <div style="font-size:.55rem;font-family:monospace;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,230,102,.45);text-align:center;">PUNTOS</div>
+      </div>
+      <!-- Pot -->
+      <div class="pot" style="padding:7px 12px;text-align:center;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:2px;">
+          <span id="bdgRound" style="font-family:'Anton',sans-serif;font-size:.6rem;background:var(--BR);color:var(--YL);padding:1px 7px;border-radius:9999px;border:2px solid var(--Y);">RONDA 1</span>
+          <span id="bdgMult"  style="font-family:'Anton',sans-serif;font-size:.6rem;background:var(--WD);color:var(--YL);padding:1px 7px;border-radius:9999px;border:2px solid var(--Y);">x1</span>
+        </div>
+        <div id="scorePot" class="sc-led" style="font-size:clamp(1.8rem,4.5vw,3.2rem);line-height:1.1;">000</div>
+        <div style="font-size:.55rem;font-family:monospace;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,230,102,.5);">BOTE</div>
+      </div>
+      <!-- Team B -->
+      <div class="sc" style="padding:7px 12px;position:relative;">
+        <div id="possB" class="poss">EN JUEGO ◀</div>
+        <div id="nameB" class="font-tv" style="font-size:clamp(.7rem,1.8vw,1.1rem);color:var(--YL);text-align:center;"></div>
+        <div id="scoreB" class="sc-led" style="font-size:clamp(1.8rem,4.5vw,3.2rem);text-align:center;line-height:1.1;">000</div>
+        <div style="font-size:.55rem;font-family:monospace;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,230,102,.45);text-align:center;">PUNTOS</div>
+      </div>
+    </div>
+
+    <!-- STEAL BANNER -->
+    <div id="stealBanner" class="steal-banner" style="display:none;flex-shrink:0;">
+      <div class="font-tv" style="font-size:clamp(.9rem,2.2vw,1.5rem);color:var(--YL);letter-spacing:.1em;">⚡ ROBO DE PUNTOS: <span id="stealName"></span> ⚡</div>
+      <div style="font-size:.65rem;font-family:monospace;color:rgba(255,230,102,.7);margin-top:2px;">Una respuesta correcta = se llevan el bote completo</div>
+    </div>
+
+    <!-- TABLERO PRINCIPAL -->
+    <div class="arch" style="flex:1;display:flex;flex-direction:column;min-height:0;">
+
+      <!-- Bombillas arriba -->
+      <div class="bulbs">
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+      </div>
+
+      <!-- Título + orbs -->
+      <div style="display:flex;align-items:center;gap:7px;padding:3px 6px;flex-shrink:0;">
+        <div class="orb"></div>
+        <div style="flex:1;text-align:center;">
+          <div class="font-tv" style="font-size:clamp(.85rem,2.2vw,1.5rem);color:var(--YL);letter-spacing:.12em;text-shadow:0 0 10px rgba(255,230,102,.5),2px 2px 4px rgba(0,0,0,.8);">100 PROGRAMADORES DIJERON</div>
+          <div style="font-size:.55rem;letter-spacing:.18em;color:rgba(255,230,102,.55);font-family:monospace;text-transform:uppercase;">AWS UG MARIACHI BUILDERS</div>
+        </div>
+        <div class="orb"></div>
+      </div>
+
+      <!-- Marco café -->
+      <div class="bframe" style="flex:1;display:flex;flex-direction:column;min-height:0;margin:4px 2px;">
+        <span class="screw" style="top:5px;left:5px;"></span>
+        <span class="screw" style="top:5px;right:5px;"></span>
+        <span class="screw" style="bottom:5px;left:5px;"></span>
+        <span class="screw" style="bottom:5px;right:5px;"></span>
+
+        <!-- Pregunta -->
+        <div class="qbar" style="flex-shrink:0;">
+          <p id="qText">Cargando pregunta…</p>
+        </div>
+
+        <!-- Slots grid -->
+        <div id="answersGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1;align-content:start;"></div>
+
+        <!-- Strikes -->
+        <div style="display:flex;gap:7px;margin-top:7px;justify-content:center;flex-shrink:0;">
+          <div class="stk-out" style="flex:1;max-width:115px;height:34px;"><div id="s1" class="stk-in">X</div></div>
+          <div class="stk-out" style="flex:1;max-width:115px;height:34px;"><div id="s2" class="stk-in">X</div></div>
+          <div class="stk-out" style="flex:1;max-width:115px;height:34px;"><div id="s3" class="stk-in">X</div></div>
+        </div>
+      </div>
+
+      <!-- Bombillas abajo -->
+      <div class="bulbs" style="margin-top:4px;">
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+      </div>
+    </div>
+
+    <!-- BUZZER BANNER -->
+    <div id="buzBanner" class="buz-banner" style="display:none;flex-shrink:0;">
+      <div style="font-size:.6rem;font-family:monospace;text-transform:uppercase;font-weight:900;letter-spacing:.15em;">¡CARA A CARA GANADO!</div>
+      <div id="buzWinner" class="font-tv" style="font-size:clamp(1rem,2.8vw,1.8rem);letter-spacing:.08em;"></div>
+    </div>
+
+    <!-- WINNER BANNER -->
+    <div id="winBanner" class="win-banner" style="display:none;flex-shrink:0;">
+      <div style="font-size:.6rem;font-family:monospace;text-transform:uppercase;font-weight:900;letter-spacing:.15em;">🏆 ¡GANADOR DEL JUEGO!</div>
+      <div id="winTeam" class="font-tv" style="font-size:clamp(1.4rem,3.5vw,2.8rem);letter-spacing:.08em;margin:3px 0;"></div>
+      <div style="font-size:.7rem;font-family:monospace;color:rgba(10,30,136,.7);">Pasar a Dinero Rápido → abrir fastmoney.html</div>
+    </div>
+
+  </main>
+
+  <!-- STRIKE OVERLAY -->
+  <div id="stkOverlay">
+    <div id="stkBoxes"></div>
+  </div>
+
+  <script>
+    const CH = new BroadcastChannel('100_prog_dijeron');
+    let muted=false, actx=null;
+
+    const DQ=[
+      {question:"Ronda 1: La excusa más común cuando el código no funciona en producción:",answers:[
+        {text:"En mi local sí funcionaba",points:42},{text:"Se cayó AWS / el servidor",points:23},
+        {text:"Alguien movió la base de datos",points:15},{text:"Es problema de caché / DNS",points:11},
+        {text:"Falta actualizar dependencias",points:6},{text:"El becario hizo push a main",points:3}]},
+      {question:"Ronda 2: ¿Qué hace un dev primero cuando le sale un error?",answers:[
+        {text:"Pegarlo en ChatGPT / Kiro",points:39},{text:"Buscar en Stack Overflow",points:27},
+        {text:"Poner un console.log / print",points:16},{text:"Reiniciar el IDE / servidor",points:10},
+        {text:"Hacerse un café y llorar",points:5},{text:"Leer la documentación oficial",points:3}]},
+      {question:"Ronda 3 (Puntos Dobles): Servicio de AWS que todo developer conoce:",answers:[
+        {text:"Amazon S3 (Buckets)",points:36},{text:"Amazon EC2 (VMs)",points:26},
+        {text:"AWS Lambda (Serverless)",points:18},{text:"AWS Amplify",points:11},
+        {text:"Amazon RDS / DynamoDB",points:9}]},
+      {question:"Ronda 4 (Puntos Triples): ¿Qué lenguaje recomiendas para empezar?",answers:[
+        {text:"Python",points:45},{text:"JavaScript",points:30},{text:"C / C++",points:14},{text:"Java",points:11}]},
+      {question:"Extra: Algo que nunca puede faltar en un Hackathon / Meetup Tech:",answers:[
+        {text:"Pizza / Comida gratis",points:40},{text:"Stickers para la laptop",points:25},
+        {text:"Café / Bebidas energéticas",points:17},{text:"Wi-Fi y multicontactos",points:11},
+        {text:"Playeras / Swag oficial",points:7}]}
+    ];
+
+    function loadSt(){
+      try{
+        const r=localStorage.getItem('100_prog_state');
+        if(r){const s=JSON.parse(r);const cq=localStorage.getItem('100_dev_questions_store');if(cq)s.questions=JSON.parse(cq);return s;}
+      }catch(e){}
+      return{questions:JSON.parse(localStorage.getItem('100_dev_questions_store')||'null')||DQ,
+        currentRoundIndex:0,multiplier:1,pot:0,strikes:0,
+        possessionTeam:'A',stealMode:{active:false,stealingTeam:'B'},
+        teamA:{name:'Mariachi Devs',score:0},teamB:{name:'Cloud Ninjas',score:0},
+        revealed:[],buzzer:{state:'idle',winner:null,winnerName:'',deltaMs:0},
+        winnerDeclared:false,
+        fastMoney:{p1Name:'Jugador 1',p2Name:'Jugador 2',p1Time:25,p2Time:25,timerRunning:false,activeTimerPlayer:null,
+          p1Data:[{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false}],
+          p2Data:[{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false},{answer:'',points:0,revealed:false}]}};
+    }
+
+    let gs=loadSt();
+
+    CH.onmessage=ev=>{
+      if(!ev.data?.payload)return;
+      const ps=gs.strikes,pb=gs.buzzer.winner;
+      gs=ev.data.payload;
+      if(ev.data.action==='STRIKE'||gs.strikes>ps){snd('incorrecto');stkAnim(gs.strikes);}
+      else if(ev.data.action==='REVEAL_ANSWER'||ev.data.action==='PLAY_CORRECTO')snd('correcto');
+      else if(ev.data.action==='PLAY_INCORRECTO')snd('incorrecto');
+      else if(ev.data.action==='POT_LOST')snd('nadie');
+      else if(['AWARD_POT','STEAL_SUCCESS','PLAY_TRIUNFO'].includes(ev.data.action))snd('triunfo');
+      else if(ev.data.action==='BUZZER_HIT'||(!pb&&gs.buzzer.winner))buzSnd();
+      render();
+    };
+    window.addEventListener('storage',e=>{if(e.key==='100_prog_state'){gs=loadSt();render();}});
+
+    function render(){
+      const q=gs.questions[gs.currentRoundIndex]||gs.questions[0];
+      if(!gs.revealed||gs.revealed.length!==q.answers.length)gs.revealed=new Array(q.answers.length).fill(false);
+      if(!gs.scored  ||gs.scored.length  !==q.answers.length)gs.scored  =new Array(q.answers.length).fill(false);
+      let pot=0;q.answers.forEach((a,i)=>{if(gs.scored[i])pot+=a.points*gs.multiplier;});gs.pot=pot;
+
+      st('nameA',gs.teamA.name);st('nameB',gs.teamB.name);
+      st('scoreA',pad(gs.teamA.score));st('scoreB',pad(gs.teamB.score));
+      st('scorePot',pad(gs.pot));
+      st('bdgRound',`RONDA ${gs.currentRoundIndex+1}`);
+      st('bdgMult',`x${gs.multiplier}`);
+      st('qText',q.question);
+
+      vi('possA',gs.possessionTeam==='A');
+      vi('possB',gs.possessionTeam==='B');
+
+      const sb=document.getElementById('stealBanner');
+      if(sb){sb.style.display=gs.stealMode?.active?'block':'none';
+        st('stealName',(gs.stealMode.stealingTeam==='A'?gs.teamA.name:gs.teamB.name).toUpperCase());}
+
+      const grid=document.getElementById('answersGrid');
+      if(grid){
+        grid.innerHTML='';
+        q.answers.forEach((a,i)=>{
+          const open=gs.revealed[i];
+          const w=document.createElement('div');
+          w.className='persp';w.style.height='clamp(40px,5vw,58px)';
+          w.innerHTML=`<div class="fw ${open?'flipped':''}">
+            <div class="ff"><div class="slot-out" style="height:100%;"><div class="slot-closed"><div class="slot-num">${i+1}</div></div></div></div>
+            <div class="ff back"><div class="slot-out" style="height:100%;"><div class="slot-open"><span class="slot-txt">${a.text}</span><span class="slot-pts">${a.points}</span></div></div></div>
+          </div>`;
+          grid.appendChild(w);
+        });
+      }
+
+      for(let i=1;i<=3;i++){const e=document.getElementById(`s${i}`);if(e)e.className='stk-in'+(i<=gs.strikes?' on':'');}
+
+      const bb=document.getElementById('buzBanner');
+      if(bb){bb.style.display=gs.buzzer.winner?'block':'none';
+        if(gs.buzzer.winner)st('buzWinner',`¡${gs.buzzer.winnerName.toUpperCase()} TIENE LA PALABRA!`);}
+
+      const wb=document.getElementById('winBanner');
+      if(wb){wb.style.display=gs.winnerDeclared?'block':'none';
+        if(gs.winnerDeclared){const w=gs.teamA.score>=gs.teamB.score?gs.teamA.name:gs.teamB.name;st('winTeam',`¡${w.toUpperCase()} GANÓ!`);}}
+    }
+
+    function stkAnim(c){
+      const ov=document.getElementById('stkOverlay'),bx=document.getElementById('stkBoxes');if(!ov||!bx)return;
+      bx.innerHTML='';
+      for(let i=0;i<Math.min(Math.max(c,1),3);i++){
+        const b=document.createElement('div');
+        b.style.cssText='width:clamp(80px,13vw,150px);height:clamp(80px,13vw,150px);border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:"Anton",sans-serif;font-size:clamp(3.5rem,9vw,7.5rem);color:#FFE566;background:linear-gradient(160deg,#cc0000,#880000);border:7px solid #F5C200;box-shadow:0 0 45px rgba(200,0,0,1),0 0 70px rgba(200,0,0,.6);';
+        b.textContent='X';bx.appendChild(b);
+      }
+      ov.style.display='flex';setTimeout(()=>{ov.style.display='none';},1400);
+    }
+
+    const SNDS={aJugar:'https://www.myinstants.com/media/sounds/a-jugar-100-mexicanos-dijeron.mp3',correcto:'https://www.myinstants.com/media/sounds/correcto-100-mexicanos-dijeron.mp3',incorrecto:'https://www.image2url.com/r2/default/audio/1793938303982-68a12ca4-eda5-483a-9160-2f6956a39144.mp3',nadie:'https://www.myinstants.com/media/sounds/incorrecto-100-mexicanos-dijeron.mp3',triunfo:'https://www.myinstants.com/media/sounds/triunfo-100-mexicanos-dijeron.mp3'};
+    function snd(n){if(muted)return;try{const a=new Audio(SNDS[n]);a.volume=.9;a.play().catch(()=>synth(n));}catch(e){}}
+    function buzSnd(){if(muted)return;try{const a=new Audio('https://www.image2url.com/r2/default/audio/1793937760522-a0303af8-e84d-4685-a325-b153cad18d79.mp3');a.volume=1.0;a.play().catch(()=>{try{const ctx=gctx(),now=ctx.currentTime;[880,1174.66,1568].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;const t=now+i*.07;g.gain.setValueAtTime(.27,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.4);});}catch(e){}});}catch(e){}}
+    function synth(n){try{const ctx=gctx(),now=ctx.currentTime;const o=ctx.createOscillator(),g=ctx.createGain();o.type=n==='incorrecto'?'sawtooth':'triangle';o.frequency.value=n==='incorrecto'?110:1046;g.gain.setValueAtTime(.24,now);g.gain.exponentialRampToValueAtTime(.001,now+.6);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+.6);}catch(e){}}
+    function gctx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx;}
+    function toggleMute(){muted=!muted;document.getElementById('btnMute').textContent=muted?'🔇':'🔊';}
+    function toggleFullScreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen().catch(()=>{});}
+    function st(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+    function vi(id,s){const e=document.getElementById(id);if(e)e.style.display=s?'block':'none';}
+    function pad(n){return String(Math.max(0,n)).padStart(3,'0');}
+    window.onload=()=>render();
+  </script>
+</body>
+</html>

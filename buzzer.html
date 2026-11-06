@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>100 Programadores Dijeron — Cara a Cara / Buzzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse at 50% 20%, #001fa8 0%, #000e4e 50%, #00051a 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .font-tv    { font-family: 'Anton','Bebas Neue',Impact,sans-serif; letter-spacing:.06em; }
+    .font-bebas { font-family: 'Bebas Neue','Anton',Impact,sans-serif; letter-spacing:.1em; }
+    .font-led   { font-family: 'Orbitron',monospace; text-shadow:0 0 14px #f5c518,0 0 30px #f5c51880; }
+
+    .buzzer-header {
+      background: linear-gradient(180deg, #001fa8 0%, #0033cc 50%, #0044ee 100%);
+      border-bottom: 3px solid #f5c800;
+    }
+
+    /* ── Gold Frame ── */
+    .gold-frame {
+      background: linear-gradient(145deg,#ffe566 0%,#c9971c 40%,#7a5500 80%,#f5c518 100%);
+      box-shadow: 0 0 0 4px #7a5500, 0 12px 40px rgba(0,0,0,.85), inset 0 2px 5px rgba(255,255,255,.5);
+    }
+
+    /* ── Giant Buzzer Buttons ── */
+    .buzzer-btn {
+      border-radius: 2.5rem;
+      padding: .5rem;
+      cursor: pointer;
+      transition: transform .1s, filter .1s;
+      outline: none;
+      border: none;
+    }
+    .buzzer-btn:active { transform: scale(.94); filter: brightness(.9); }
+
+    .buzzer-inner {
+      width: 100%; height: 100%;
+      border-radius: 2rem;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+      border: 5px solid rgba(255,255,255,.25);
+      box-shadow: inset 0 4px 20px rgba(0,0,0,.5);
+    }
+
+    .buzzer-a .buzzer-inner {
+      background: linear-gradient(160deg, #f5c800 0%, #d4a000 50%, #7a5500 100%);
+    }
+    .buzzer-b .buzzer-inner {
+      background: linear-gradient(160deg, #0044ee 0%, #0033cc 50%, #001080 100%);
+    }
+
+    /* ── States ── */
+    .buzzer-btn.winner-glow .buzzer-inner {
+      box-shadow: 0 0 60px rgba(245,197,24,1), 0 0 100px rgba(245,197,24,.6), inset 0 4px 20px rgba(0,0,0,.4);
+    }
+    .buzzer-btn.locked .buzzer-inner {
+      filter: brightness(.35) saturate(.3);
+    }
+
+    /* ── Status Center ── */
+    .status-pill {
+      background: rgba(0,0,0,.85);
+      border: 2px solid rgba(245,197,24,.4);
+      border-radius: 9999px;
+      padding: .4rem 1.5rem;
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      color: #fde047;
+      text-align: center;
+    }
+
+    @keyframes pulseGold {
+      0%,100% { box-shadow:0 0 20px rgba(245,197,24,.6); }
+      50%      { box-shadow:0 0 50px rgba(245,197,24,1); }
+    }
+    .pulse-gold { animation: pulseGold 1s infinite; }
+
+    @keyframes winnerReveal {
+      0%   { transform: scale(.5) rotate(-5deg); opacity:0; }
+      60%  { transform: scale(1.08) rotate(2deg); opacity:1; }
+      100% { transform: scale(1) rotate(0deg); opacity:1; }
+    }
+    .winner-anim { animation: winnerReveal .5s cubic-bezier(.22,1,.36,1) forwards; }
+
+    kbd { background:#000; border:1px solid #f5c518; border-radius:.3rem; padding:.1rem .4rem; font-size:.8rem; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ══════════════════════════════════════════ HEADER ══════════════════════════════════════════ -->
+  <header class="buzzer-header px-4 py-3 z-30 flex-shrink-0">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+
+      <div class="flex items-center gap-3">
+        <img src="logo ug mb nuevo.png" alt="Mariachi Builders" class="h-12 w-auto object-contain drop-shadow-lg" />
+        <img src="AWS_logo_RGB_WHT.png" alt="AWS" class="h-9 w-auto object-contain drop-shadow-lg" />
+        <div class="ml-1">
+          <h1 class="font-tv text-lg md:text-xl text-yellow-300 leading-none">CARA A CARA</h1>
+          <span class="text-[10px] font-mono uppercase text-yellow-200/60">100 Programadores Dijeron</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:5px;">
+        <button onclick="document.documentElement.requestFullscreen?.();" style="background:rgba(0,0,0,.4);border:2px solid rgba(245,197,24,.4);color:#ffe566;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.7rem;">⛶</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════ MAIN BUZZER ══════════════════════════════════════════ -->
+  <main class="flex-1 flex flex-col items-center justify-between p-4 md:p-6 gap-4 max-w-5xl mx-auto w-full">
+
+    <!-- Title & Status -->
+    <div class="text-center space-y-2 flex-shrink-0">
+      <span class="inline-block px-4 py-1 rounded-full bg-red-900/60 border border-yellow-500/40 text-yellow-300 font-mono text-xs uppercase tracking-widest">
+        DUELO DE CAPITANES
+      </span>
+      <h2 id="statusHeading" class="font-tv text-3xl md:text-5xl text-yellow-300 tracking-wider">
+        ESPERANDO AL CONDUCTOR…
+      </h2>
+      <p class="text-sm text-yellow-200/60 font-mono">
+        <kbd>A</kbd> Equipo A &nbsp;|&nbsp; <kbd>L</kbd> Equipo B &nbsp;|&nbsp; o toca tu botón
+      </p>
+    </div>
+
+    <!-- Giant Dual Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full flex-1 items-stretch max-h-[480px]">
+
+      <button id="buzzerA" onclick="hitBuzzer('A')" class="buzzer-btn buzzer-a gold-frame" aria-label="Buzzer Equipo A">
+        <div class="buzzer-inner">
+          <i data-lucide="zap" class="w-14 h-14 text-black/70 mb-3"></i>
+          <span id="labelA" class="font-tv text-3xl md:text-5xl text-blue-900 uppercase tracking-widest drop-shadow">MARIACHI DEVS</span>
+          <span class="text-xs font-mono text-blue-900/60 mt-2 uppercase">Tecla [ A ] · Tocar Aquí</span>
+        </div>
+      </button>
+
+      <button id="buzzerB" onclick="hitBuzzer('B')" class="buzzer-btn buzzer-b gold-frame" aria-label="Buzzer Equipo B">
+        <div class="buzzer-inner">
+          <i data-lucide="zap" class="w-14 h-14 text-red-200/70 mb-3"></i>
+          <span id="labelB" class="font-tv text-3xl md:text-5xl text-yellow-200 uppercase tracking-widest drop-shadow">CLOUD NINJAS</span>
+          <span class="text-xs font-mono text-yellow-200/60 mt-2 uppercase">Tecla [ L ] · Tocar Aquí</span>
+        </div>
+      </button>
+
+    </div>
+
+    <!-- Winner Card (hidden until winner) -->
+    <div id="winnerCard" class="hidden winner-anim w-full max-w-2xl bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 border-4 border-red-700 p-4 rounded-3xl text-center shadow-[0_0_60px_rgba(245,197,24,1)] text-black flex-shrink-0">
+      <div class="text-xs font-mono uppercase font-black tracking-widest">⚡ PRIMER TOQUE — CARA A CARA</div>
+      <div id="winnerName"  class="font-tv text-3xl md:text-5xl uppercase my-1">EQUIPO A</div>
+      <div id="winnerDelta" class="text-sm font-mono font-bold">¡Más rápido en el botón!</div>
+      <p class="text-xs font-mono mt-1 text-black/60">El conductor puede bloquear/resetear desde <a href="admin.html" class="underline">admin.html</a></p>
+    </div>
+
+    <!-- Status Pill -->
+    <div id="statusPill" class="status-pill flex-shrink-0">
+      🔒 Botón bloqueado — el conductor lo habilitará
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════ ENGINE ══════════════════════════════════════════ -->
+  <script>
+    const channel = new BroadcastChannel('100_prog_dijeron');
+    let audioCtx = null;
+    let armTimestamp = 0;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem('100_prog_state');
+        if (raw) return JSON.parse(raw);
+      } catch(e){}
+      return {
+        teamA:{name:'Mariachi Devs',score:0}, teamB:{name:'Cloud Ninjas',score:0},
+        buzzer:{state:'idle',winner:null,winnerName:'',deltaMs:0},
+        questions:[], currentRoundIndex:0, multiplier:1, pot:0, strikes:0,
+        possessionTeam:'A', stealMode:{active:false,stealingTeam:'B'},
+        revealed:[], winnerDeclared:false,
+        fastMoney:{p1Time:25,p2Time:25,timerRunning:false,activeTimerPlayer:null,
+          p1Data:[],p2Data:[]}
+      };
+    }
+
+    let gs = loadState();
+
+    channel.onmessage = (ev) => {
+      if (!ev.data?.payload) return;
+      gs = ev.data.payload;
+      if (gs.buzzer.state === 'armed' && armTimestamp === 0) armTimestamp = performance.now();
+      renderBuzzer();
+    };
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === '100_prog_state') { gs = loadState(); renderBuzzer(); }
+    });
+
+    function saveAndBroadcast(action) {
+      localStorage.setItem('100_prog_state', JSON.stringify(gs));
+      channel.postMessage({ action, payload: gs });
+      renderBuzzer();
+    }
+
+    /* ── RENDER ── */
+    function renderBuzzer() {
+      const bz = gs.buzzer;
+
+      // Team labels
+      setText('labelA', gs.teamA.name);
+      setText('labelB', gs.teamB.name);
+
+      const btnA = document.getElementById('buzzerA');
+      const btnB = document.getElementById('buzzerB');
+      const heading = document.getElementById('statusHeading');
+      const pill    = document.getElementById('statusPill');
+      const winCard = document.getElementById('winnerCard');
+
+      if (bz.winner) {
+        // Winner state
+        btnA?.classList.remove('winner-glow','pulse-gold');
+        btnB?.classList.remove('winner-glow','pulse-gold');
+        btnA?.classList.add('locked');
+        btnB?.classList.add('locked');
+        const winBtn = bz.winner === 'A' ? btnA : btnB;
+        winBtn?.classList.remove('locked');
+        winBtn?.classList.add('winner-glow');
+
+        if (heading) { heading.textContent = `¡${bz.winnerName.toUpperCase()} PRESIONÓ PRIMERO!`; heading.className='font-tv text-3xl md:text-5xl text-yellow-300 tracking-wider'; }
+        pill && (pill.textContent = '⚡ CARA A CARA — Ganador confirmado');
+
+        setText('winnerName', `¡${bz.winnerName.toUpperCase()}!`);
+        if (bz.deltaMs > 0) setText('winnerDelta', `Ventaja: ${bz.deltaMs} ms`);
+        winCard?.classList.remove('hidden');
+
+      } else if (bz.state === 'armed') {
+        // Armed state
+        btnA?.classList.remove('locked');
+        btnB?.classList.remove('locked');
+        btnA?.classList.remove('winner-glow');
+        btnB?.classList.remove('winner-glow');
+        armTimestamp = performance.now();
+        if (heading) { heading.textContent = '¡PRESIONA TU BOTÓN AHORA!'; heading.className='font-tv text-3xl md:text-5xl text-yellow-300 tracking-wider'; }
+        pill && (pill.textContent = '🟢 BOTÓN HABILITADO — ¡a presionar!');
+        pill?.classList.add('pulse-gold');
+        winCard?.classList.add('hidden');
+
+      } else {
+        // Idle / locked state
+        btnA?.classList.remove('winner-glow','pulse-gold');
+        btnB?.classList.remove('winner-glow','pulse-gold');
+        btnA?.classList.add('locked');
+        btnB?.classList.add('locked');
+        if (heading) { heading.textContent = 'ESPERANDO AL CONDUCTOR…'; heading.className='font-tv text-3xl md:text-5xl text-yellow-300/50 tracking-wider'; }
+        pill && (pill.textContent = '🔒 Botón bloqueado — el conductor lo habilitará');
+        pill?.classList.remove('pulse-gold');
+        winCard?.classList.add('hidden');
+      }
+    }
+
+    function hitBuzzer(team) {
+      if (gs.buzzer.winner) return;
+      if (gs.buzzer.state !== 'armed') return;
+
+      const delta = Math.round(performance.now() - armTimestamp);
+      const teamName = team === 'A' ? gs.teamA.name : gs.teamB.name;
+
+      gs.buzzer.state       = 'locked';
+      gs.buzzer.winner      = team;
+      gs.buzzer.winnerName  = teamName;
+      gs.buzzer.deltaMs     = delta;
+      gs.possessionTeam     = team;
+
+      playBuzzerSound();
+      saveAndBroadcast('BUZZER_HIT');
+    }
+
+    /* ── AUDIO ── */
+    const BUZZER_SFX = 'https://www.image2url.com/r2/default/audio/1793937760522-a0303af8-e84d-4685-a325-b153cad18d79.mp3';
+
+    function playBuzzerSound() {
+      try {
+        const a = new Audio(BUZZER_SFX);
+        a.volume = 1.0;
+        a.play().catch(() => synthFallback());
+      } catch(e) { synthFallback(); }
+    }
+
+    /* Fallback sintetizado por si el MP3 no carga */
+    function synthFallback() {
+      try {
+        const ctx = getAudioCtx(); const now = ctx.currentTime;
+        [880, 1174.66, 1568].forEach((f, i) => {
+          const o=ctx.createOscillator(), g=ctx.createGain();
+          o.type='triangle'; o.frequency.value=f;
+          const t=now+i*.07;
+          g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.001,t+.4);
+          o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+.4);
+        });
+      } catch(e){}
+    }
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      if (audioCtx.state==='suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    /* ── KEYBOARD ── */
+    window.addEventListener('keydown', e => {
+      if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+      if (e.key.toLowerCase() === 'a') hitBuzzer('A');
+      if (e.key.toLowerCase() === 'l') hitBuzzer('B');
+    });
+
+    /* ── TOUCH: unlock audio context on first tap ── */
+    document.addEventListener('touchstart', () => { getAudioCtx(); }, { once: true });
+    document.addEventListener('click',      () => { getAudioCtx(); }, { once: true });
+
+    /* ── HELPER ── */
+    function setText(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+
+    window.onload = () => { lucide.createIcons(); renderBuzzer(); };
+  </script>
+</body>
+</html>
