@@ -207,7 +207,9 @@
     @keyframes sp{0%{transform:scale(.2) rotate(-10deg);opacity:0}60%{transform:scale(1.1) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
     #stkOverlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.82);}
     #stkBoxes{display:flex;gap:24px;animation:sp .4s cubic-bezier(.22,1,.36,1) forwards;}
-  </style>
+    .nav-link{display:block;padding:7px 10px;border-radius:7px;color:var(--YL);text-decoration:none;font-size:.75rem;font-family:monospace;white-space:nowrap;}
+  .nav-link:hover{background:rgba(245,194,0,.18);}
+</style>
 </head>
 <body>
 
@@ -224,6 +226,14 @@
     <div style="display:flex;gap:5px;">
       <button onclick="toggleFullScreen()" style="background:rgba(0,0,0,.4);border:2px solid rgba(245,194,0,.4);color:var(--YL);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.7rem;">⛶</button>
       <button id="btnMute" onclick="toggleMute()" style="background:rgba(0,0,0,.4);border:2px solid rgba(245,194,0,.4);color:var(--YL);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.7rem;">🔊</button>
+      <div style="position:relative;">
+        <button id="btnNav" onclick="toggleNav(event)" title="Ir a otras pantallas" style="background:rgba(0,0,0,.4);border:2px solid rgba(245,194,0,.4);color:var(--YL);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.7rem;">☰</button>
+        <div id="navMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:9999;min-width:190px;background:linear-gradient(180deg,var(--BR),var(--BD));border:2px solid var(--Y);border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+          <a href="admin.html" target="_blank" rel="noopener" class="nav-link">🎛️ Panel Admin / Conductor</a>
+          <a href="buzzer.html" target="_blank" rel="noopener" class="nav-link">🔔 Cara a Cara / Buzzer</a>
+          <a href="fastmoney.html" target="_blank" rel="noopener" class="nav-link">💰 Dinero Rápido</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -459,6 +469,8 @@
     function buzSnd(){if(muted)return;try{const a=new Audio('https://www.image2url.com/r2/default/audio/1793937760522-a0303af8-e84d-4685-a325-b153cad18d79.mp3');a.volume=1.0;a.play().catch(()=>{try{const ctx=gctx(),now=ctx.currentTime;[880,1174.66,1568].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;const t=now+i*.07;g.gain.setValueAtTime(.27,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.4);});}catch(e){}});}catch(e){}}
     function synth(n){try{const ctx=gctx(),now=ctx.currentTime;const o=ctx.createOscillator(),g=ctx.createGain();o.type=n==='incorrecto'?'sawtooth':'triangle';o.frequency.value=n==='incorrecto'?110:1046;g.gain.setValueAtTime(.24,now);g.gain.exponentialRampToValueAtTime(.001,now+.6);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+.6);}catch(e){}}
     function gctx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx;}
+    function toggleNav(e){e.stopPropagation();const m=document.getElementById('navMenu');m.style.display=m.style.display==='block'?'none':'block';}
+    document.addEventListener('click',e=>{const m=document.getElementById('navMenu');if(m&&!m.contains(e.target))m.style.display='none';});
     function toggleMute(){muted=!muted;document.getElementById('btnMute').textContent=muted?'🔇':'🔊';}
     function toggleFullScreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen().catch(()=>{});}
     function st(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
